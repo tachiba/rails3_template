@@ -116,6 +116,7 @@ get "#{repo_url}/config/redis.yml", 'config/redis.yml'
 
 get "#{repo_url}/config/deploy.rb", 'config/deploy.rb'
 gsub_file "config/deploy.rb", /%app_name%/, app_name
+gsub_file "config/deploy.rb", /%app_name_classify%/, app_name.classify
 
 get "#{repo_url}/config/unicorn.rb", 'config/unicorn.rb'
 gsub_file "config/unicorn.rb", /%app_name%/, app_name

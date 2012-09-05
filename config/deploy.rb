@@ -42,7 +42,7 @@ require 'capistrano/ext/multistage'
 #= colorful!
 require 'capistrano_colors'
 
-set :application, "%app_name%".classify
+set :application, "%app_name_classify%"
 set :application_underscore, "%app_name%"
 set :default_stage, "production"
 
