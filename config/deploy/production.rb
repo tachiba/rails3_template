@@ -1,3 +1,3 @@
 role :app, ""
 
-set :deploy_to, "/path_to/admin"
+set :deploy_to, "%dir_production%"

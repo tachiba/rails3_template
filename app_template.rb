@@ -5,6 +5,18 @@
 repo_url = "https://raw.github.com/tachiba/rails3_template/master"
 gems = {}
 
+@app_name = app_name
+
+def get_and_gsub(source_path, local_path)
+  get source_path, local_path
+
+  gsub_file local_path, /%app_name%/, @app_name
+  gsub_file local_path, /%app_name_classify%/, @app_name.classify
+  gsub_file local_path, /%working_user%/, @working_user
+  gsub_file local_path, /%dir_development%/, @dir_development
+  gsub_file local_path, /%dir_production%/, @dir_production
+end
+
 #
 # Gemfile
 #
@@ -95,6 +107,10 @@ run "bundle install"
 # capify application
 capify!
 
+@working_user = ask("working user?")
+@dir_production = ask("production dir?")
+@dir_development = ask("development dir?")
+
 #
 # Files and Directories
 #
@@ -113,12 +129,16 @@ remove_file "config/deploy.rb"
 
 get "#{repo_url}/config/redis.yml", 'config/redis.yml'
 
-get "#{repo_url}/config/deploy.rb", 'config/deploy.rb'
-gsub_file "config/deploy.rb", /%app_name%/, app_name
-gsub_file "config/deploy.rb", /%app_name_classify%/, app_name.classify
+get_and_gsub "#{repo_url}/config/deploy.rb", 'config/deploy.rb'
+get_and_gsub "#{repo_url}/config/unicorn.rb", 'config/unicorn.rb'
 
-get "#{repo_url}/config/unicorn.rb", 'config/unicorn.rb'
-gsub_file "config/unicorn.rb", /%app_name%/, app_name
+# god
+empty_directory "config/god"
+get_and_gsub "#{repo_url}/config/god/unicorn.rb", 'config/god/unicorn.rb'
+
+# deploy
+empty_directory "config/deploy"
+get_and_gsub "#{repo_url}/config/deploy/production.rb", 'config/deploy/production.rb'
 
 # initializers
 if gems[:redis_rails]
@@ -135,11 +155,6 @@ if gems[:redis]
     get "#{repo_url}/config/initializers/resque.rb", 'config/initializers/resque.rb'
   end
 end
-
-# god
-empty_directory "config/god"
-get "#{repo_url}/config/god/unicorn.rb", 'config/god/unicorn.rb'
-gsub_file "config/god/unicorn.rb", /%app_name%/, app_name
 
 #
 # Generators

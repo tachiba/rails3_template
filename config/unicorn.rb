@@ -2,16 +2,16 @@ rails_env = ENV['RAILS_ENV']
 
 case rails_env.to_sym
   when :development
-    app_path = "/path_to/development"
+    app_path = "%dir_development%"
     worker_processes 1
 
   when :staging
-    app_path = "/path_to/current"
+    app_path = "%dir_production%"
     worker_processes 1
     preload_app true
 
   when :production
-    app_path = "/path_to/current"
+    app_path = "%dir_production%"
     worker_processes 1
     preload_app true
 

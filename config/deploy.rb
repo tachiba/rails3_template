@@ -9,7 +9,7 @@ set :deploy_via, :remote_cache
 #
 #= ssh
 #
-set :user, ""
+set :user, "%working_user%"
 set :use_sudo, false
 default_run_options[:pty] = true
 ssh_options[:forward_agent] = true
