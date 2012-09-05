@@ -2,6 +2,8 @@
 # Application Template
 #
 
+p File.basename(__FILE__)
+
 gems = {}
 
 #
@@ -133,11 +135,3 @@ end
 git :init
 git :add => '.'
 git :commit => '-am "Initial commit"'
-
-
-
-
-
-
-
-
