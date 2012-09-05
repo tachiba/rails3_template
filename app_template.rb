@@ -2,8 +2,7 @@
 # Application Template
 #
 
-p File.basename(__FILE__)
-
+repo_url = "https://raw.github.com/tachiba/rails3_template/master"
 gems = {}
 
 #
@@ -111,6 +110,10 @@ empty_directory "lib/jobs"
 create_file "config/config.yml", "empty: true"
 create_file "config/schedule.rb"
 remove_file "config/deploy.rb"
+
+get "#{repo_url}/config/unicorn.rb", 'config/unicorn.rb'
+get "#{repo_url}/config/redis.yml", 'config/redis.yml'
+get "#{repo_url}/config/deploy.rb", 'config/deploy.rb'
 
 # initializers
 gsub_file "config/initializers/session_store.rb", /:cookie_store, .+/, ":redis_store, servers: $redis_store, expires_in: 30.minutes"
