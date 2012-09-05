@@ -1,4 +1,20 @@
 #
+#= git
+#
+set :repository,  "git@gitlab.wondershake.com:%app_name%.git"
+set :scm, :git
+set :branch, "master"
+set :deploy_via, :remote_cache
+
+#
+#= ssh
+#
+set :user, ""
+set :use_sudo, false
+default_run_options[:pty] = true
+ssh_options[:forward_agent] = true
+
+#
 #= RVM integration
 # https://rvm.io/integration/capistrano/
 #
@@ -26,25 +42,9 @@ require 'capistrano/ext/multistage'
 #= colorful!
 require 'capistrano_colors'
 
-set :application, "NaverMatome"
-set :application_underscore, "naver_matome_admin"
+set :application, "%app_name%".classify
+set :application_underscore, "%app_name%"
 set :default_stage, "production"
-
-#
-#= git
-#
-set :repository,  "git@gitlab.wondershake.com:naver_matome_admin.git"
-set :scm, :git
-set :branch, "master"
-set :deploy_via, :remote_cache
-
-#
-#= ssh
-#
-set :user, "naver"
-set :use_sudo, false
-default_run_options[:pty] = true
-ssh_options[:forward_agent] = true
 
 after "deploy:update", "deploy:cleanup"
 

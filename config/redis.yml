@@ -2,5 +2,5 @@ development:
   host: localhost
   port: 6379
 production: 
-  host: ap01.wondershake.com
+  host: localhost
   port: 6379

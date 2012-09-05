@@ -111,9 +111,14 @@ create_file "config/config.yml", "empty: true"
 create_file "config/schedule.rb"
 remove_file "config/deploy.rb"
 
-get "#{repo_url}/config/unicorn.rb", 'config/unicorn.rb'
 get "#{repo_url}/config/redis.yml", 'config/redis.yml'
+
+
 get "#{repo_url}/config/deploy.rb", 'config/deploy.rb'
+gsub_file "config/deploy.rb", /%app_name%/, app_name
+
+get "#{repo_url}/config/unicorn.rb", 'config/unicorn.rb'
+gsub_file "config/unicorn.rb", /%app_name%/, app_name
 
 # initializers
 gsub_file "config/initializers/session_store.rb", /:cookie_store, .+/, ":redis_store, servers: $redis_store, expires_in: 30.minutes"
