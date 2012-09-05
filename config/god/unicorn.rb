@@ -1,10 +1,12 @@
-app_name = "naver_matome_admin"
+app_name = "%app_name%"
+user = ""
+
 case (app_env = ENV['RAILS_ENV'] || "development")
   when 'production'
-    app_root = "/home/naver/web/admin/current"
+    app_root = "/path_to/current"
 
   when 'development'
-    app_root = "/home/naver/web/admin/development"
+    app_root = "/path_to/development"
 
   else
     exit(1)
@@ -39,8 +41,8 @@ God.watch do |w|
   w.pid_file = "#{app_root}/tmp/pids/unicorn.pid"
   w.log = "#{app_root}/log/unicorn.log"
 
-  w.uid = 'naver'
-  w.gid = 'naver'
+  w.uid = user
+  w.gid = user
 
   w.behavior(:clean_pid_file)
 

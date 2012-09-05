@@ -113,7 +113,6 @@ remove_file "config/deploy.rb"
 
 get "#{repo_url}/config/redis.yml", 'config/redis.yml'
 
-
 get "#{repo_url}/config/deploy.rb", 'config/deploy.rb'
 gsub_file "config/deploy.rb", /%app_name%/, app_name
 gsub_file "config/deploy.rb", /%app_name_classify%/, app_name.classify
@@ -122,12 +121,29 @@ get "#{repo_url}/config/unicorn.rb", 'config/unicorn.rb'
 gsub_file "config/unicorn.rb", /%app_name%/, app_name
 
 # initializers
-gsub_file "config/initializers/session_store.rb", /:cookie_store, .+/, ":redis_store, servers: $redis_store, expires_in: 30.minutes"
+if gems[:redis_rails]
+  gsub_file "config/initializers/session_store.rb", /:cookie_store, .+/, ":redis_store, servers: $redis_store, expires_in: 30.minutes"
+end
+
+get "#{repo_url}/config/initializers/config.rb", 'config/initializers/config.rb'
+get "#{repo_url}/config/initializers/rainbow.rb", 'config/initializers/rainbow.rb'
+
+if gems[:redis]
+  get "#{repo_url}/config/initializers/redis.rb", 'config/initializers/redis.rb'
+
+  if gems[:resque]
+    get "#{repo_url}/config/initializers/resque.rb", 'config/initializers/resque.rb'
+  end
+end
+
+# god
+empty_directory "config/god"
+get "#{repo_url}/config/god/unicorn.rb", 'config/god/unicorn.rb'
+gsub_file "config/god/unicorn.rb", /%app_name%/, app_name
 
 #
 # Generators
 #
-
 if gems[:bootstrap]
   generate 'bootstrap:install'
 
