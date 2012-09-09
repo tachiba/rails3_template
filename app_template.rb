@@ -182,15 +182,15 @@ insert_into_file "config/application.rb",
 
 # config/environments
 insert_into_file "config/environments/production.rb",
-                 %(    config.assets.precompile += %w( *.css *.js )\n),
+                 %(  config.assets.precompile += %w( *.css *.js )\n),
                  after: "# Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)\n"
 
 insert_into_file "config/environments/production.rb",
-                 %(    config.action_controller.page_cache_directory = Rails.root.join("public", "system", "cache")\n),
+                 %(  config.action_controller.page_cache_directory = Rails.root.join("public", "system", "cache")\n),
                  after: "# config.cache_store = :mem_cache_store\n"
 
 insert_into_file "config/environments/production.rb",
-                 %(    config.assets.static_cache_control = "public, max-age=#{60 * 60 * 24}"\n),
+                 %(  config.assets.static_cache_control = "public, max-age=#{60 * 60 * 24}"\n),
                  after: "# config.cache_store = :mem_cache_store\n"
 
 # config/god
