@@ -172,23 +172,25 @@ get_and_gsub "#{repo_url}/config/database.yml", 'config/database.yml'
 gsub_database 'config/database.yml'
 
 # config/application.rb
-insert_into_file "config/application.rb", %(config.autoload_paths += Dir[Rails.root.join('lib')]),
+insert_into_file "config/application.rb",
+                 %(    config.autoload_paths += Dir[Rails.root.join('lib')]\n),
                  after: "# Custom directories with classes and modules you want to be autoloadable.\n"
 
-insert_into_file "config/application.rb", %(config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]),
+insert_into_file "config/application.rb",
+                 %(    config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]\n),
                  after: "# The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.\n"
 
 # config/environments
 insert_into_file "config/environments/production.rb",
-                 %(config.assets.precompile += %w( *.css *.js )),
+                 %(    config.assets.precompile += %w( *.css *.js )\n),
                  after: "# Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)\n"
 
 insert_into_file "config/environments/production.rb",
-                 %(config.action_controller.page_cache_directory = Rails.root.join("public", "system", "cache")),
+                 %(    config.action_controller.page_cache_directory = Rails.root.join("public", "system", "cache")\n),
                  after: "# config.cache_store = :mem_cache_store\n"
 
 insert_into_file "config/environments/production.rb",
-                 %(config.assets.static_cache_control = "public, max-age=#{60 * 60 * 24}"),
+                 %(    config.assets.static_cache_control = "public, max-age=#{60 * 60 * 24}"\n),
                  after: "# config.cache_store = :mem_cache_store\n"
 
 # config/god
