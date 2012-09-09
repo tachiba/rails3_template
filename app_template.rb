@@ -148,6 +148,8 @@ remove_file "app/views/layouts/application.html.erb"
 
 # views
 empty_directory "app/views/shared"
+get "#{repo_url}/app/views/shared/_socialize.html.erb", "app/views/shared/_socialize.html.erb"
+get "#{repo_url}/app/views/shared/_socialize_lib.html.erb", "app/views/shared/_socialize_lib.html.erb"
 
 # public
 empty_directory "public/system/cache"
