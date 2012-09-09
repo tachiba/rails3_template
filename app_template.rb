@@ -2,8 +2,6 @@
 # Application Template
 #
 
-require 'active_support'
-
 repo_url = "https://raw.github.com/tachiba/rails3_template/master"
 gems = {}
 
@@ -190,7 +188,7 @@ insert_into_file "config/environments/production.rb",
                  after: "# config.cache_store = :mem_cache_store\n"
 
 insert_into_file "config/environments/production.rb",
-                 %(config.assets.static_cache_control = "public, max-age=#{1.day}"),
+                 %(config.assets.static_cache_control = "public, max-age=#{60 * 60 * 24}"),
                  after: "# config.cache_store = :mem_cache_store\n"
 
 # config/god
