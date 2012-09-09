@@ -1,0 +1,16 @@
+# idea ide
+.idea/*
+
+# capistrano
+public/system
+
+# temporary files
+log/*
+tmp/*
+public/assets
+
+# sqlite
+db/*.sqlite3
+
+/.bundle
+

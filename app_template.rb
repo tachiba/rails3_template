@@ -15,6 +15,18 @@ def get_and_gsub(source_path, local_path)
   gsub_file local_path, /%working_user%/, @working_user
   gsub_file local_path, /%dir_development%/, @dir_development
   gsub_file local_path, /%dir_production%/, @dir_production
+  gsub_file local_path, /%remote_repo%/, @remote_repo
+end
+
+def gsub_database(localpath)
+  return unless @mysql
+
+  gsub_file localpath, /%mysql_username_development%/, @mysql[:username_development]
+  gsub_file localpath, /%mysql_remote_host_development%/, @mysql[:remote_host_development]
+
+  gsub_file localpath, /%mysql_username_production%/, @mysql[:username_production]
+  gsub_file localpath, /%mysql_password_production%/, @mysql[:password_production]
+  gsub_file localpath, /%mysql_remote_host_production%/, @mysql[:remote_host_production]
 end
 
 #
@@ -33,6 +45,10 @@ gem 'dynamic_form'
 
 # process monitor
 gem 'god', require: false
+
+# rails-sh
+# https://github.com/jugyo/rails-sh
+gem 'rails-sh', require: false
 
 # capistrano
 gem_group :deployment do
@@ -110,6 +126,18 @@ capify!
 @working_user = ask("working user?")
 @dir_production = ask("production dir?")
 @dir_development = ask("development dir?")
+@remote_repo = ask("repote git repo? e.g.) username@hostname")
+
+@mysql = false
+if yes?("set up mysql now?")
+  @mysql = {}
+  @mysql[:remote_host_development] = ask("mysql:development remote host?")
+  @mysql[:username_development] = ask("mysql:development username?")
+
+  @mysql[:remote_host_production] = ask("mysql:production remote host?")
+  @mysql[:username_production] = ask("mysql:production username?")
+  @mysql[:password_production] = ask("mysql:production password?")
+end
 
 #
 # Files and Directories
@@ -117,6 +145,12 @@ capify!
 
 remove_file "public/index.html"
 remove_file "app/views/layouts/application.html.erb"
+
+# views
+empty_directory "app/views/shared"
+
+# public
+empty_directory "public/system/cache"
 
 # lib
 empty_directory "lib/runner"
@@ -132,15 +166,40 @@ get "#{repo_url}/config/redis.yml", 'config/redis.yml'
 get_and_gsub "#{repo_url}/config/deploy.rb", 'config/deploy.rb'
 get_and_gsub "#{repo_url}/config/unicorn.rb", 'config/unicorn.rb'
 
-# god
+# config/database.yml
+remove_file "config/database.yml"
+get_and_gsub "#{repo_url}/config/database.yml", 'config/database.yml'
+gsub_database 'config/database.yml'
+
+# config/application.rb
+insert_into_file "config/application.rb", %(config.autoload_paths += Dir[Rails.root.join('lib')]),
+                 after: "# Custom directories with classes and modules you want to be autoloadable.\n"
+
+insert_into_file "config/application.rb", %(config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]),
+                 after: "# The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.\n"
+
+# config/environments
+insert_into_file "config/environments/production.rb",
+                 %(config.assets.precompile += %w( *.css *.js )),
+                 after: "# Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)\n"
+
+insert_into_file "config/environments/production.rb",
+                 %(config.action_controller.page_cache_directory = Rails.root.join("public", "system", "cache")),
+                 after: "# config.cache_store = :mem_cache_store\n"
+
+insert_into_file "config/environments/production.rb",
+                 %(config.assets.static_cache_control = "public, max-age=#{1.day}"),
+                 after: "# config.cache_store = :mem_cache_store\n"
+
+# config/god
 empty_directory "config/god"
 get_and_gsub "#{repo_url}/config/god/unicorn.rb", 'config/god/unicorn.rb'
 
-# deploy
+# config/deploy
 empty_directory "config/deploy"
 get_and_gsub "#{repo_url}/config/deploy/production.rb", 'config/deploy/production.rb'
 
-# initializers
+# config/initializers
 if gems[:redis_rails]
   gsub_file "config/initializers/session_store.rb", /:cookie_store, .+/, ":redis_store, servers: $redis_store, expires_in: 30.minutes"
 end
@@ -172,6 +231,9 @@ end
 #
 # Git
 #
+remove_file '.gitignore'
+get "#{repo_url}/gitignore", '.gitignore'
 git :init
 git :add => '.'
 git :commit => '-am "Initial commit"'
+git :remote => "add origin #@remote_repo:#@app_name.git"

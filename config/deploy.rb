@@ -1,7 +1,7 @@
 #
 #= git
 #
-set :repository,  "git@gitlab.wondershake.com:%app_name%.git"
+set :repository,  "%remote_repo%:%app_name%.git"
 set :scm, :git
 set :branch, "master"
 set :deploy_via, :remote_cache
