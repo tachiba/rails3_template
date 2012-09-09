@@ -2,6 +2,8 @@
 # Application Template
 #
 
+require 'active_support'
+
 repo_url = "https://raw.github.com/tachiba/rails3_template/master"
 gems = {}
 
