@@ -50,6 +50,8 @@ gem 'god', require: false
 # https://github.com/jugyo/rails-sh
 gem 'rails-sh', require: false
 
+gem 'rails_config'
+
 # capistrano
 gem_group :deployment do
   gem 'rvm-capistrano'
@@ -143,6 +145,10 @@ end
 # Files and Directories
 #
 
+# .gitignore
+remove_file '.gitignore'
+get "#{repo_url}/gitignore", '.gitignore'
+
 remove_file "public/index.html"
 remove_file "app/views/layouts/application.html.erb"
 
@@ -159,7 +165,7 @@ empty_directory "lib/runner"
 empty_directory "lib/jobs"
 
 # config
-create_file "config/config.yml", "empty: true"
+#create_file "config/config.yml", "empty: true"
 create_file "config/schedule.rb"
 remove_file "config/deploy.rb"
 
@@ -208,7 +214,7 @@ if gems[:redis_rails]
   gsub_file "config/initializers/session_store.rb", /:cookie_store, .+/, ":redis_store, servers: $redis_store, expires_in: 30.minutes"
 end
 
-get "#{repo_url}/config/initializers/config.rb", 'config/initializers/config.rb'
+#get "#{repo_url}/config/initializers/config.rb", 'config/initializers/config.rb'
 get "#{repo_url}/config/initializers/rainbow.rb", 'config/initializers/rainbow.rb'
 
 if gems[:redis]
@@ -232,11 +238,11 @@ if gems[:bootstrap]
   end
 end
 
+generate 'rails_config:install'
+
 #
 # Git
 #
-remove_file '.gitignore'
-get "#{repo_url}/gitignore", '.gitignore'
 git :init
 git :add => '.'
 git :commit => '-am "Initial commit"'
