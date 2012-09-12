@@ -153,11 +153,15 @@ remove_file "public/index.html"
 remove_file "app/views/layouts/application.html.erb"
 
 # views
-get "#{repo_url}/app/views/shared", "app/views/shared"
-get "#{repo_url}/app/views/kaminari", "app/views/shared"
-#empty_directory "app/views/shared"
-#get "#{repo_url}/app/views/shared/_socialize.html.erb", "app/views/shared/_socialize.html.erb"
-#get "#{repo_url}/app/views/shared/_socialize_lib.html.erb", "app/views/shared/_socialize_lib.html.erb"
+empty_directory "app/views/shared"
+%w(socialize socialize_lib paginate).each do |key|
+  get "#{repo_url}/app/views/shared/_#{key}.html.erb", "app/views/shared/_#{key}.html.erb"
+end
+
+empty_directory "app/views/kaminari"
+%w(first_page gap last_page next_page page paginator prev_page).each do |key|
+  get "#{repo_url}/app/views/kaminari/_#{key}.html.erb", "app/views/kaminari/_#{key}.html.erb"
+end
 
 # public
 empty_directory "public/system/cache"
