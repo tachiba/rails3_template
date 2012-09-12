@@ -1,0 +1,10 @@
+<div class="visible-desktop pagination-wrapper">
+	<%= paginate data, window: 1, outer_window: 1 %>
+</div>
+
+<div class="hidden-desktop pagination-wrapper">
+	<% unless data.first_page? %>
+		<%= link_to "前のページ", {page: data.current_page - 1}, {class: 'btn btn-large'} %>
+	<% end %>
+	<%= link_to_next_page(data, "次のページ", class: 'btn btn-large') %>
+</div>
