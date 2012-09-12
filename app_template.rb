@@ -185,6 +185,10 @@ insert_into_file "config/application.rb",
                  after: "# Custom directories with classes and modules you want to be autoloadable.\n"
 
 insert_into_file "config/application.rb",
+                 %(    config.autoload_paths += Dir[Rails.root.join('app', 'models')]\n),
+                 after: "# Custom directories with classes and modules you want to be autoloadable.\n"
+
+insert_into_file "config/application.rb",
                  %(    config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]\n),
                  after: "# The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.\n"
 
