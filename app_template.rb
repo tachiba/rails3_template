@@ -153,8 +153,8 @@ remove_file "public/index.html"
 remove_file "app/views/layouts/application.html.erb"
 
 # views
-directory "#{repo_url}/app/views/shared"
-directory "#{repo_url}/app/views/kaminari"
+get "#{repo_url}/app/views/shared", "app/views/shared"
+get "#{repo_url}/app/views/kaminari", "app/views/shared"
 #empty_directory "app/views/shared"
 #get "#{repo_url}/app/views/shared/_socialize.html.erb", "app/views/shared/_socialize.html.erb"
 #get "#{repo_url}/app/views/shared/_socialize_lib.html.erb", "app/views/shared/_socialize_lib.html.erb"
