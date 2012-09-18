@@ -180,7 +180,6 @@ empty_directory "lib/runner"
 empty_directory "lib/jobs"
 
 # config
-#create_file "config/config.yml", "empty: true"
 create_file "config/schedule.rb"
 remove_file "config/deploy.rb"
 
@@ -260,12 +259,11 @@ if gems[:bootstrap]
   else
     generate 'bootstrap:layout application fluid'
   end
+
+  gsub_file "app/views/layouts/application.html.haml", /lang="en"/, %(lang="ja")
 end
 
 generate 'rails_config:install'
-
-# TODO test
-gsub_file "app/views/layouts/application.html.haml", /lang="en"/, %(lang="ja")
 
 #
 # Git
