@@ -3,10 +3,10 @@ user = "%working_user%"
 
 case (app_env = ENV['RAILS_ENV'] || "development")
   when 'production'
-    app_root = "%dir_production%"
+    app_root = "%working_dir%/current"
 
   when 'development'
-    app_root = "%dir_development%"
+    app_root = "%working_dir%/development"
 
   else
     exit(1)

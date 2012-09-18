@@ -13,8 +13,7 @@ def get_and_gsub(source_path, local_path)
   gsub_file local_path, /%app_name%/, @app_name
   gsub_file local_path, /%app_name_classify%/, @app_name.classify
   gsub_file local_path, /%working_user%/, @working_user
-  gsub_file local_path, /%dir_development%/, @dir_development
-  gsub_file local_path, /%dir_production%/, @dir_production
+  gsub_file local_path, /%working_dir%/, @working_dir
   gsub_file local_path, /%remote_repo%/, @remote_repo
 end
 
@@ -67,6 +66,8 @@ gem_group :test do
   gem 'faker'
   gem 'sqlite3'
 end
+
+gem 'haml-rails'
 
 comment_lines 'Gemfile', "gem 'sqlite3'"
 uncomment_lines 'Gemfile', "gem 'therubyracer'"
@@ -126,8 +127,7 @@ run "bundle install"
 capify!
 
 @working_user = ask("working user?")
-@dir_production = ask("production dir?")
-@dir_development = ask("development dir?")
+@working_dir = ask("working dir? e.g.) /path/to/working_dir")
 @remote_repo = ask("repote git repo? e.g.) username@hostname")
 
 @mysql = false
@@ -151,6 +151,15 @@ get "#{repo_url}/gitignore", '.gitignore'
 
 remove_file "public/index.html"
 remove_file "app/views/layouts/application.html.erb"
+
+# locales/ja.yml
+# TODO test
+get "#{repo_url}/config/locales/ja.yml", "config/locales/ja.yml"
+
+# helpers
+# TODO test
+remove_file "app/helpers/application_helper.rb"
+get "#{repo_url}/app/helpers/application_helper.rb", "app/helpers/application_helper.rb"
 
 # views
 empty_directory "app/views/shared"
@@ -189,6 +198,11 @@ gsub_database 'config/database.yml'
 insert_into_file "config/application.rb",
                  %(    config.autoload_paths += Dir[Rails.root.join('lib')]\n),
                  after: "# Custom directories with classes and modules you want to be autoloadable.\n"
+
+# TODO test
+insert_into_file "config/application.rb",
+                 %(    config.i18n.default_locale = :ja\n),
+                 after: "# config.i18n.default_locale = :de\n"
 
 insert_into_file "config/application.rb",
                  %(    config.autoload_paths += Dir[Rails.root.join('app', 'models')]\n),
@@ -249,6 +263,9 @@ if gems[:bootstrap]
 end
 
 generate 'rails_config:install'
+
+# TODO test
+gsub_file "app/views/layouts/application.html.haml", /lang="en"/, %(lang="ja")
 
 #
 # Git
