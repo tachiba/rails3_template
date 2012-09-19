@@ -69,6 +69,10 @@ end
 
 gem 'haml-rails'
 
+gem 'active_decorator'
+
+gem 'cells'
+
 comment_lines 'Gemfile', "gem 'sqlite3'"
 uncomment_lines 'Gemfile', "gem 'therubyracer'"
 uncomment_lines 'Gemfile', "gem 'unicorn'"
@@ -145,6 +149,16 @@ end
 # Files and Directories
 #
 
+# use Rspec instead of TestUnit
+remove_dir 'test'
+
+application <<-APPEND_APPLICATION
+  config.generators do |generate|
+    generate.test_framework   :rspec, :fixture => true, :views => false
+    generate.integration_tool :rspec, :fixture => true, :views => true
+  end
+APPEND_APPLICATION
+
 # .gitignore
 remove_file '.gitignore'
 get "#{repo_url}/gitignore", '.gitignore'
@@ -153,11 +167,9 @@ remove_file "public/index.html"
 remove_file "app/views/layouts/application.html.erb"
 
 # locales/ja.yml
-# TODO test
 get "#{repo_url}/config/locales/ja.yml", "config/locales/ja.yml"
 
 # helpers
-# TODO test
 remove_file "app/helpers/application_helper.rb"
 get "#{repo_url}/app/helpers/application_helper.rb", "app/helpers/application_helper.rb"
 
@@ -198,7 +210,6 @@ insert_into_file "config/application.rb",
                  %(    config.autoload_paths += Dir[Rails.root.join('lib')]\n),
                  after: "# Custom directories with classes and modules you want to be autoloadable.\n"
 
-# TODO test
 insert_into_file "config/application.rb",
                  %(    config.i18n.default_locale = :ja\n),
                  after: "# config.i18n.default_locale = :de\n"
@@ -262,6 +273,8 @@ if gems[:bootstrap]
 
   gsub_file "app/views/layouts/application.html.haml", /lang="en"/, %(lang="ja")
 end
+
+generate 'rspec:install'
 
 generate 'rails_config:install'
 
