@@ -153,10 +153,10 @@ end
 remove_dir 'test'
 
 application <<-APPEND_APPLICATION
-  config.generators do |generate|
-    generate.test_framework   :rspec, :fixture => true, :views => false
-    generate.integration_tool :rspec, :fixture => true, :views => true
-  end
+config.generators do |generate|
+      generate.test_framework   :rspec, :fixture => true, :views => false
+      generate.integration_tool :rspec, :fixture => true, :views => true
+    end
 APPEND_APPLICATION
 
 # .gitignore
