@@ -73,6 +73,8 @@ gem 'active_decorator'
 
 gem 'cells'
 
+gem 'tapp'
+
 comment_lines 'Gemfile', "gem 'sqlite3'"
 uncomment_lines 'Gemfile', "gem 'therubyracer'"
 uncomment_lines 'Gemfile', "gem 'unicorn'"
