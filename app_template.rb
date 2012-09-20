@@ -203,8 +203,6 @@ empty_directory "lib/jobs"
 create_file "config/schedule.rb"
 remove_file "config/deploy.rb"
 
-get "#{repo_url}/config/redis.yml", 'config/redis.yml'
-
 get_and_gsub "#{repo_url}/config/deploy.rb", 'config/deploy.rb'
 get_and_gsub "#{repo_url}/config/unicorn.rb", 'config/unicorn.rb'
 
@@ -261,9 +259,10 @@ get "#{repo_url}/config/initializers/rainbow.rb", 'config/initializers/rainbow.r
 
 if gems[:redis]
   get "#{repo_url}/config/initializers/redis.rb", 'config/initializers/redis.rb'
+  get "#{repo_url}/config/redis.yml", 'config/redis.yml'
 
-  gsub_file 'config/initializers/redis.rb', /%redis_development%/, @redis[:development]
-  gsub_file 'config/initializers/redis.rb', /%redis_production%/, @redis[:production]
+  gsub_file 'config/redis.yml', /%redis_development%/, @redis[:development]
+  gsub_file 'config/redis.yml', /%redis_production%/, @redis[:production]
 
   if gems[:resque]
     get "#{repo_url}/config/initializers/resque.rb", 'config/initializers/resque.rb'
