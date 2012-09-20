@@ -147,6 +147,12 @@ if yes?("set up mysql now?")
   @mysql[:password_production] = ask("mysql:production password?")
 end
 
+if gems[:redis]
+  @redis = {}
+  @redis[:development] = ask("redis development server?")
+  @redis[:production] = ask("redis production server?")
+end
+
 #
 # Files and Directories
 #
@@ -256,8 +262,15 @@ get "#{repo_url}/config/initializers/rainbow.rb", 'config/initializers/rainbow.r
 if gems[:redis]
   get "#{repo_url}/config/initializers/redis.rb", 'config/initializers/redis.rb'
 
+  gsub_file 'config/initializers/redis.rb', /%redis_development%/, @redis[:development]
+  gsub_file 'config/initializers/redis.rb', /%redis_production%/, @redis[:production]
+
   if gems[:resque]
     get "#{repo_url}/config/initializers/resque.rb", 'config/initializers/resque.rb'
+
+    insert_into_file "Rakefile",
+                     %(require 'resque/tasks'),
+                     after: "require File.expand_path('../config/application', __FILE__)\n"
   end
 end
 
