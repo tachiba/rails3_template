@@ -266,6 +266,7 @@ if gems[:redis]
 
   if gems[:resque]
     get "#{repo_url}/config/initializers/resque.rb", 'config/initializers/resque.rb'
+    get "#{repo_url}/lib/tasks/resque.rake", 'lib/tasks/resque.rake'
 
     insert_into_file "Rakefile",
                      %(require 'resque/tasks'),
