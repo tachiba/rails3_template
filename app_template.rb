@@ -70,6 +70,7 @@ end
 gem 'haml-rails'
 
 #gem 'active_decorator'
+gem 'permanent_records'
 
 gem 'cells'
 
