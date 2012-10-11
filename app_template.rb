@@ -69,7 +69,7 @@ end
 
 gem 'haml-rails'
 
-gem 'active_decorator'
+#gem 'active_decorator'
 
 gem 'cells'
 
@@ -96,10 +96,10 @@ if gems[:redis]
   end
 
   # redis-rails
-  gems[:redis_rails] = yes?("Would you like to install redis-rails?")
-  if gems[:redis_rails]
-    gem 'redis-rails'
-  end
+  #gems[:redis_rails] = yes?("Would you like to install redis-rails?")
+  #if gems[:redis_rails]
+  #  gem 'redis-rails'
+  #end
 end
 
 # twitter bootstrap
@@ -250,9 +250,9 @@ empty_directory "config/deploy"
 get_and_gsub "#{repo_url}/config/deploy/production.rb", 'config/deploy/production.rb'
 
 # config/initializers
-if gems[:redis_rails]
-  gsub_file "config/initializers/session_store.rb", /:cookie_store, .+/, ":redis_store, servers: $redis_store, expires_in: 30.minutes"
-end
+#if gems[:redis_rails]
+#  gsub_file "config/initializers/session_store.rb", /:cookie_store, .+/, ":redis_store, servers: $redis_store, expires_in: 30.minutes"
+#end
 
 #get "#{repo_url}/config/initializers/config.rb", 'config/initializers/config.rb'
 get "#{repo_url}/config/initializers/rainbow.rb", 'config/initializers/rainbow.rb'
@@ -266,7 +266,7 @@ if gems[:redis]
 
   if gems[:resque]
     get "#{repo_url}/config/initializers/resque.rb", 'config/initializers/resque.rb'
-    get "#{repo_url}/lib/tasks/resque.rake", 'lib/tasks/resque.rake'
+    #get "#{repo_url}/lib/tasks/resque.rake", 'lib/tasks/resque.rake'
 
     insert_into_file "Rakefile",
                      %(require 'resque/tasks'),
