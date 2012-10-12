@@ -33,7 +33,7 @@ end
 #
 # Gemfile
 #
-gem 'mysql2'#, git: 'git://github.com/tachiba/mysql2.git'
+gem 'mysql2', git: 'git://github.com/tachiba/mysql2.git'
 
 # colorful logging(ANSI color)
 gem 'rainbow'
