@@ -20,6 +20,8 @@ end
 def gsub_database(localpath)
   return unless @mysql
 
+  gsub_file localpath, /%database_name%/, @mysql[:database_name] ? @mysql[:database_name] : @app_name
+
   gsub_file localpath, /%mysql_username_development%/, @mysql[:username_development]
   gsub_file localpath, /%mysql_remote_host_development%/, @mysql[:remote_host_development]
 
@@ -31,7 +33,7 @@ end
 #
 # Gemfile
 #
-gem 'mysql2', git: 'git://github.com/tachiba/mysql2.git'
+gem 'mysql2'#, git: 'git://github.com/tachiba/mysql2.git'
 
 # colorful logging(ANSI color)
 gem 'rainbow'
@@ -140,6 +142,8 @@ capify!
 @mysql = false
 if yes?("set up mysql now?")
   @mysql = {}
+  @mysql[:database_name] = ask("database name?")
+
   @mysql[:remote_host_development] = ask("mysql:development remote host?")
   @mysql[:username_development] = ask("mysql:development username?")
 
