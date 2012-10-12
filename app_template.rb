@@ -184,7 +184,7 @@ get "#{repo_url}/app/helpers/application_helper.rb", "app/helpers/application_he
 
 # views
 empty_directory "app/views/shared"
-%w(socialize socialize_lib paginate).each do |key|
+%w(socialize socialize_lib paginate socialize_facebook socialize_google socialize_hatebu socialize_twitter).each do |key|
   get "#{repo_url}/app/views/shared/_#{key}.html.erb", "app/views/shared/_#{key}.html.erb"
 end
 
