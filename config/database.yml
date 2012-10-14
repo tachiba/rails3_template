@@ -1,6 +1,6 @@
 development:
   adapter: mysql2
-  database: %database_name%
+  database: "%database_name%"
   username: "%mysql_username_development%"
   encoding: utf8mb4
   pool: 5
