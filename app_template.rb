@@ -172,6 +172,9 @@ config.generators do |generate|
     end
 APPEND_APPLICATION
 
+# Capfile
+uncomment_lines "Capfile", "load 'deploy/assets'"
+
 # .gitignore
 remove_file '.gitignore'
 get "#{repo_url}/gitignore", '.gitignore'
