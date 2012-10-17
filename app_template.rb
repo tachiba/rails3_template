@@ -53,25 +53,27 @@ gem 'rails-sh', require: false
 
 gem 'rails_config'
 
-# capistrano
 gem_group :deployment do
+  # capistrano
   gem 'rvm-capistrano'
   gem 'capistrano'
   gem 'capistrano-ext'
   gem 'capistrano_colors'
 end
 
-# test
 gem_group :test, :development do
+  # test
   gem "rspec-rails"
   gem "factory_girl_rails", "~> 3.0"
   gem 'faker'
   gem 'sqlite3'
 end
 
-gem 'haml-rails'
+gem_group :development do
+  gem 'pry-rails'
+end
 
-gem 'pry-rails', :group => :development
+gem 'haml-rails'
 
 #gem 'active_decorator'
 gem 'permanent_records'
