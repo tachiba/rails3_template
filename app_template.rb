@@ -71,6 +71,8 @@ end
 
 gem 'haml-rails'
 
+gem 'pry-rails', :group => :development
+
 #gem 'active_decorator'
 gem 'permanent_records'
 
