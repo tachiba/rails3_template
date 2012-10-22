@@ -90,9 +90,9 @@ uncomment_lines 'Gemfile', "gem 'therubyracer'"
 uncomment_lines 'Gemfile', "gem 'unicorn'"
 
 # whenever
-if yes?("Would you like to install whenever?")
-  gem 'whenever', require: false
-end
+#if yes?("Would you like to install whenever?")
+gem 'whenever', require: false
+#end
 
 # redis
 gems[:redis] = yes?("Would you like to install redis?")
