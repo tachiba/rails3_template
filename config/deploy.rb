@@ -1,10 +1,11 @@
 #
 #= git
 #
-set :repository,  "%remote_repo%:%app_name%.git"
+set :repository, "%deploy_repo%"
 set :scm, :git
 set :branch, "master"
-set :deploy_via, :remote_cache
+#set :deploy_via, :remote_cache
+#set :deploy_via, :rsync_with_remote_cache
 
 #
 #= ssh
@@ -64,7 +65,6 @@ after "deploy:update", "deploy:cleanup"
 #    end
 #  end
 #end
-
 
 #
 #= god

@@ -14,7 +14,7 @@ def get_and_gsub(source_path, local_path)
   gsub_file local_path, /%app_name_classify%/, @app_name.classify
   gsub_file local_path, /%working_user%/, @working_user
   gsub_file local_path, /%working_dir%/, @working_dir
-  gsub_file local_path, /%remote_repo%/, @remote_repo
+  #gsub_file local_path, /%remote_repo%/, @remote_repo if @remote_repo
 end
 
 def gsub_database(localpath)
@@ -60,6 +60,7 @@ gem_group :deployment do
   gem 'capistrano'
   gem 'capistrano-ext'
   gem 'capistrano_colors'
+  gem 'capistrano_rsync_with_remote_cache'
 end
 
 gem_group :test, :development do
@@ -88,6 +89,11 @@ gem 'turbo-sprockets-rails3'
 comment_lines 'Gemfile', "gem 'sqlite3'"
 uncomment_lines 'Gemfile', "gem 'therubyracer'"
 uncomment_lines 'Gemfile', "gem 'unicorn'"
+
+# xml-sitemap
+#if yes?("Would you like to install xml-sitemap?")
+gem 'xml-sitemap'
+#end
 
 # whenever
 #if yes?("Would you like to install whenever?")
@@ -129,11 +135,6 @@ if yes?("Would you like to install nokogiri?")
   gem 'nokogiri'
 end
 
-# xml-sitemap
-#if yes?("Would you like to install xml-sitemap?")
-gem 'xml-sitemap'
-#end
-
 #
 # Bundle install
 #
@@ -142,9 +143,19 @@ run "bundle install"
 # capify application
 capify!
 
-@working_user = ask("working user?")
-@working_dir = ask("working dir? e.g.) /path/to/working_dir")
-@remote_repo = ask("repote git repo? e.g.) username@hostname")
+@deploy_via_remote = false
+if yes?("Do you deploy via remote capistrano?")
+  @deploy_via_remote = true
+else
+  # deploy via rsync
+end
+
+@working_user = ask("What is your remote working user?")
+@working_dir = ask("What is your remote working dir? e.g.) /path/to/working_dir")
+
+if @deploy_via_remote
+  @remote_repo = ask("What is your remote git repo? e.g.) username@hostname")
+end
 
 @mysql = false
 if yes?("set up mysql now?")
@@ -220,6 +231,14 @@ create_file "config/schedule.rb"
 remove_file "config/deploy.rb"
 
 get_and_gsub "#{repo_url}/config/deploy.rb", 'config/deploy.rb'
+if @deploy_via_remote
+  gsub_file 'config/deploy.rb', /%deploy_repo%/, "#@remote_repo:#@app_name.git"
+  uncomment_lines 'config/deploy.rb', %(set :deploy_via, :remote_cache)
+else
+  gsub_file 'config/deploy.rb', /%deploy_repo%/, '.'
+  uncomment_lines 'config/deploy.rb', %(set :deploy_via, :rsync_with_remote_cache)
+end
+
 get_and_gsub "#{repo_url}/config/unicorn.rb", 'config/unicorn.rb'
 
 # config/database.yml
@@ -317,4 +336,7 @@ generate 'rails_config:install'
 git :init
 git :add => '.'
 git :commit => '-am "Initial commit"'
-git :remote => "add origin #@remote_repo:#@app_name.git"
+
+if @deploy_via_remote && @remote_repo
+  git :remote => "add origin #@remote_repo:#@app_name.git"
+end
