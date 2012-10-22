@@ -128,9 +128,9 @@ if yes?("Would you like to install nokogiri?")
 end
 
 # xml-sitemap
-if yes?("Would you like to install xml-sitemap?")
-  gem 'xml-sitemap'
-end
+#if yes?("Would you like to install xml-sitemap?")
+gem 'xml-sitemap'
+#end
 
 #
 # Bundle install
@@ -211,6 +211,7 @@ empty_directory "public/system/cache"
 # lib
 empty_directory "lib/runner"
 empty_directory "lib/jobs"
+get "#{repo_url}/lib/sitemap.rb", 'lib/sitemap.rb'
 
 # config
 create_file "config/schedule.rb"
