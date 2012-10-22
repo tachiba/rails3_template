@@ -33,7 +33,8 @@ end
 #
 # Gemfile
 #
-gem 'mysql2', git: 'git://github.com/tachiba/mysql2.git'
+#gem 'mysql2', git: 'git://github.com/tachiba/mysql2.git'
+gem 'mysql2'#, git: 'git://github.com/tachiba/mysql2.git'
 
 # colorful logging(ANSI color)
 gem 'rainbow'
@@ -219,9 +220,11 @@ get_and_gsub "#{repo_url}/config/deploy.rb", 'config/deploy.rb'
 get_and_gsub "#{repo_url}/config/unicorn.rb", 'config/unicorn.rb'
 
 # config/database.yml
-remove_file "config/database.yml"
-get_and_gsub "#{repo_url}/config/database.yml", 'config/database.yml'
-gsub_database 'config/database.yml'
+if @mysql
+  remove_file "config/database.yml"
+  get_and_gsub "#{repo_url}/config/database.yml", 'config/database.yml'
+  gsub_database 'config/database.yml'
+end
 
 # config/application.rb
 insert_into_file "config/application.rb",
