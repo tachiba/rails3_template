@@ -84,7 +84,7 @@ gem 'cells'
 
 gem 'tapp'
 
-gem 'turbo-sprockets-rails3'
+#gem 'turbo-sprockets-rails3'
 
 comment_lines 'Gemfile', "gem 'sqlite3'"
 uncomment_lines 'Gemfile', "gem 'therubyracer'"
