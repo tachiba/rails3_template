@@ -266,9 +266,9 @@ insert_into_file "config/application.rb",
                  after: "# The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.\n"
 
 # config/environments
-insert_into_file "config/environments/production.rb",
-                 %(  config.assets.precompile += %w( *.css *.js )\n),
-                 after: "# Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)\n"
+#insert_into_file "config/environments/production.rb",
+#                 %(  config.assets.precompile += %w( *.css *.js )\n),
+#                 after: "# Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)\n"
 
 insert_into_file "config/environments/production.rb",
                  %(  config.action_controller.page_cache_directory = Rails.root.join("public", "system", "cache")\n),
