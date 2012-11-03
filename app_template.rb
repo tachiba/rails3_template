@@ -69,6 +69,8 @@ gem_group :test, :development do
   gem "factory_girl_rails", "~> 3.0"
   gem 'faker'
   gem 'sqlite3'
+
+  gem 'thin'
 end
 
 gem_group :development do
