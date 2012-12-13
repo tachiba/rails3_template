@@ -52,7 +52,23 @@ gem 'god', require: false
 # https://github.com/jugyo/rails-sh
 gem 'rails-sh', require: false
 
+# config
 gem 'rails_config'
+
+# haml integration
+gem 'haml-rails'
+
+# awesome debugging
+gem 'tapp'
+
+# sitemap.xml
+gem 'xml-sitemap'
+
+# crontab integration
+gem 'whenever', require: false
+
+
+gem 'cells'
 
 gem_group :deployment do
   # capistrano
@@ -73,18 +89,20 @@ gem_group :test, :development do
   gem 'thin'
 end
 
+gem_group :test do
+  gem 'webmock'
+end
+
 gem_group :development do
   gem 'pry-rails'
 end
 
-gem 'haml-rails'
 
+# TODO presenter, view model gem?
 #gem 'active_decorator'
+
+# logical deletion
 gem 'permanent_records'
-
-gem 'cells'
-
-gem 'tapp'
 
 #gem 'turbo-sprockets-rails3'
 
@@ -92,15 +110,6 @@ comment_lines 'Gemfile', "gem 'sqlite3'"
 uncomment_lines 'Gemfile', "gem 'therubyracer'"
 uncomment_lines 'Gemfile', "gem 'unicorn'"
 
-# xml-sitemap
-#if yes?("Would you like to install xml-sitemap?")
-gem 'xml-sitemap'
-#end
-
-# whenever
-#if yes?("Would you like to install whenever?")
-gem 'whenever', require: false
-#end
 
 # redis
 gems[:redis] = yes?("Would you like to install redis?")
