@@ -2,7 +2,7 @@ development:
   adapter: mysql2
   database: "%database_name%"
   username: "%mysql_username_development%"
-  encoding: utf8mb4
+  encoding: utf8
   pool: 5
   timeout: 5000
   host: "%mysql_remote_host_development%"
@@ -29,6 +29,6 @@ production:
   host: "%mysql_remote_host_production%"
   username: "%mysql_username_production%"
   password: "%mysql_password_production%"
-  encoding: utf8mb4
+  encoding: utf8
   pool: 5
   timeout: 5000
