@@ -81,7 +81,7 @@ end
 
 gem_group :test, :development do
   # test
-  gem "rspec-rails"
+  gem "rspec-rails", "~> 2.12.0"
   gem "factory_girl_rails", "~> 3.0"
   gem 'faker'
   gem 'sqlite3'
