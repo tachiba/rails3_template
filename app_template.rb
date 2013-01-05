@@ -16,24 +16,23 @@ def get_and_gsub(source_path, local_path)
   gsub_file local_path, /%working_dir%/, @working_dir
   #gsub_file local_path, /%remote_repo%/, @remote_repo if @remote_repo
 end
-
-def gsub_database(localpath)
-  return unless @mysql
-
-  gsub_file localpath, /%database_name%/, @mysql[:database_name] ? @mysql[:database_name] : @app_name
-
-  gsub_file localpath, /%mysql_username_development%/, @mysql[:username_development]
-  gsub_file localpath, /%mysql_remote_host_development%/, @mysql[:remote_host_development]
-
-  gsub_file localpath, /%mysql_username_production%/, @mysql[:username_production]
-  gsub_file localpath, /%mysql_password_production%/, @mysql[:password_production]
-  gsub_file localpath, /%mysql_remote_host_production%/, @mysql[:remote_host_production]
-end
+#
+#def gsub_database(localpath)
+#  return unless @mysql
+#
+#  gsub_file localpath, /%database_name%/, @mysql[:database_name] ? @mysql[:database_name] : @app_name
+#
+#  gsub_file localpath, /%mysql_username_development%/, @mysql[:username_development]
+#  gsub_file localpath, /%mysql_remote_host_development%/, @mysql[:remote_host_development]
+#
+#  gsub_file localpath, /%mysql_username_production%/, @mysql[:username_production]
+#  gsub_file localpath, /%mysql_password_production%/, @mysql[:password_production]
+#  gsub_file localpath, /%mysql_remote_host_production%/, @mysql[:remote_host_production]
+#end
 
 #
 # Gemfile
 #
-#gem 'mysql2', git: 'git://github.com/tachiba/mysql2.git'
 gem 'mysql2'#, git: 'git://github.com/tachiba/mysql2.git'
 
 # colorful logging(ANSI color)
@@ -154,12 +153,7 @@ run "bundle install"
 # capify application
 capify!
 
-@deploy_via_remote = false
-if yes?("Do you deploy via remote capistrano?")
-  @deploy_via_remote = true
-else
-  # deploy via rsync
-end
+@deploy_via_remote = yes?("Do you deploy via remote capistrano?(or rsync)") ? true : false
 
 @working_user = ask("What is your remote working user?")
 @working_dir = ask("What is your remote working dir? e.g.) /path/to/working_dir")
@@ -168,18 +162,18 @@ if @deploy_via_remote
   @remote_repo = ask("What is your remote git repo? e.g.) username@hostname")
 end
 
-@mysql = false
-if yes?("set up mysql now?")
-  @mysql = {}
-  @mysql[:database_name] = ask("database name?")
-
-  @mysql[:remote_host_development] = ask("mysql:development remote host?")
-  @mysql[:username_development] = ask("mysql:development username?")
-
-  @mysql[:remote_host_production] = ask("mysql:production remote host?")
-  @mysql[:username_production] = ask("mysql:production username?")
-  @mysql[:password_production] = ask("mysql:production password?")
-end
+#@mysql = false
+#if yes?("set up mysql now?")
+#  @mysql = {}
+#  @mysql[:database_name] = ask("database name?")
+#
+#  @mysql[:remote_host_development] = ask("mysql:development remote host?")
+#  @mysql[:username_development] = ask("mysql:development username?")
+#
+#  @mysql[:remote_host_production] = ask("mysql:production remote host?")
+#  @mysql[:username_production] = ask("mysql:production username?")
+#  @mysql[:password_production] = ask("mysql:production password?")
+#end
 
 if gems[:redis]
   @redis = {}
@@ -253,11 +247,11 @@ end
 get_and_gsub "#{repo_url}/config/unicorn.rb", 'config/unicorn.rb'
 
 # config/database.yml
-if @mysql
-  remove_file "config/database.yml"
-  get_and_gsub "#{repo_url}/config/database.yml", 'config/database.yml'
-  gsub_database 'config/database.yml'
-end
+#if @mysql
+#  remove_file "config/database.yml"
+#  get_and_gsub "#{repo_url}/config/database.yml", 'config/database.yml'
+#  gsub_database 'config/database.yml'
+#end
 
 # config/application.rb
 insert_into_file "config/application.rb",
