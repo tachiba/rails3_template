@@ -23,6 +23,8 @@ end
 #
 gem 'mysql2'#, git: 'git://github.com/tachiba/mysql2.git'
 
+gem 'oj'
+
 # colorful logging(ANSI color)
 gem 'rainbow'
 
@@ -91,6 +93,9 @@ end
 # logical deletion
 gem 'permanent_records'
 
+# annotate models
+gem 'annotate'
+
 comment_lines 'Gemfile', "gem 'sqlite3'"
 uncomment_lines 'Gemfile', "gem 'therubyracer'"
 uncomment_lines 'Gemfile', "gem 'unicorn'"
@@ -115,6 +120,11 @@ end
 # nokogiri
 if yes?("Would you like to install nokogiri?")
   gem 'nokogiri'
+end
+
+# jbuilder
+if yes?("Would you like to install jBuilder?")
+  uncomment_lines "Gemfile", "gem 'jbuilder'"
 end
 
 #
