@@ -128,7 +128,7 @@ capify!
 @working_dir = ask("What is your remote working dir? e.g.) /path/to/working_dir")
 
 if @deploy_via_remote
-  @remote_repo = ask("What is your remote git repo? e.g.) username@hostname")
+  @remote_repo = ask("What is your remote git repo?")
 end
 
 #
@@ -187,7 +187,7 @@ remove_file "config/deploy.rb"
 
 get_and_gsub "#{repo_url}/config/deploy.rb", 'config/deploy.rb'
 if @deploy_via_remote
-  gsub_file 'config/deploy.rb', /%deploy_repo%/, "#@remote_repo:#@app_name.git"
+  gsub_file 'config/deploy.rb', /%deploy_repo%/, "#@remote_repo"
   uncomment_lines 'config/deploy.rb', %(set :deploy_via, :remote_cache)
 else
   gsub_file 'config/deploy.rb', /%deploy_repo%/, '.'
@@ -269,5 +269,5 @@ git :add => '.'
 git :commit => '-am "Initial commit"'
 
 if @deploy_via_remote && @remote_repo
-  git :remote => "add origin #@remote_repo:#@app_name.git"
+  git :remote => "add origin #@remote_repo"
 end
