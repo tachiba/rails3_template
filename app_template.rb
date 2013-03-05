@@ -16,6 +16,8 @@ def get_and_gsub(source_path, local_path)
   gsub_file local_path, /%working_dir%/, @working_dir
 end
 
+@has_view = yes?("Has view?") ? true : false
+
 #
 # Gemfile
 #
@@ -28,7 +30,7 @@ gem 'rainbow'
 gem 'kaminari'
 
 # form
-gem 'dynamic_form'
+gem 'dynamic_form' if @has_view
 
 # process monitor
 gem 'god', require: false
@@ -41,7 +43,7 @@ gem 'rails-sh', require: false
 gem 'rails_config'
 
 # haml integration
-gem 'haml-rails'
+gem 'haml-rails' if @has_view
 
 # awesome debugging
 gem 'tapp'
@@ -52,7 +54,7 @@ gem 'xml-sitemap'
 # crontab integration
 gem 'whenever', require: false
 
-gem 'cells'
+gem 'cells' if @has_view
 
 gem_group :deployment do
   # capistrano
@@ -78,9 +80,9 @@ gem_group :development do
 end
 
 gem_group :assets do
-  gem 'less-rails'
-  gem 'twitter-bootstrap-rails'
-  gem 'turbo-sprockets-rails3'
+  gem 'less-rails' if @has_view
+  gem 'twitter-bootstrap-rails' if @has_view
+  gem 'turbo-sprockets-rails3' if @has_view
 end
 
 # TODO presenter, view model gem?
@@ -89,6 +91,7 @@ end
 # logical deletion
 gem 'permanent_records'
 
+comment_lines 'Gemfile', "gem 'sqlite3'"
 uncomment_lines 'Gemfile', "gem 'therubyracer'"
 uncomment_lines 'Gemfile', "gem 'unicorn'"
 
@@ -163,14 +166,16 @@ remove_file "app/helpers/application_helper.rb"
 get "#{repo_url}/app/helpers/application_helper.rb", "app/helpers/application_helper.rb"
 
 # views
-empty_directory "app/views/shared"
-%w(socialize socialize_lib paginate socialize_facebook socialize_google socialize_hatebu socialize_twitter).each do |key|
-  get "#{repo_url}/app/views/shared/_#{key}.html.erb", "app/views/shared/_#{key}.html.erb"
-end
+if @has_view
+  empty_directory "app/views/shared"
+  %w(socialize socialize_lib paginate socialize_facebook socialize_google socialize_hatebu socialize_twitter).each do |key|
+    get "#{repo_url}/app/views/shared/_#{key}.html.erb", "app/views/shared/_#{key}.html.erb"
+  end
 
-empty_directory "app/views/kaminari"
-%w(first_page gap last_page next_page page paginator prev_page).each do |key|
-  get "#{repo_url}/app/views/kaminari/_#{key}.html.erb", "app/views/kaminari/_#{key}.html.erb"
+  empty_directory "app/views/kaminari"
+  %w(first_page gap last_page next_page page paginator prev_page).each do |key|
+    get "#{repo_url}/app/views/kaminari/_#{key}.html.erb", "app/views/kaminari/_#{key}.html.erb"
+  end
 end
 
 # public
@@ -244,16 +249,18 @@ end
 # Generators
 #
 
-# bootstrap
-generate 'bootstrap:install'
+if @has_view
+  # bootstrap
+  generate 'bootstrap:install'
 
-if yes?("Would you like to create FIXED layout?(yes=FIXED, no-FLUID)")
-  generate 'bootstrap:layout application fixed'
-else
-  generate 'bootstrap:layout application fluid'
+  if yes?("Would you like to create FIXED layout?(yes=FIXED, no-FLUID)")
+    generate 'bootstrap:layout application fixed'
+  else
+    generate 'bootstrap:layout application fluid'
+  end
+
+  gsub_file "app/views/layouts/application.html.haml", /lang="en"/, %(lang="ja") 
 end
-
-gsub_file "app/views/layouts/application.html.haml", /lang="en"/, %(lang="ja")
 
 # rspec
 generate 'rspec:install'
