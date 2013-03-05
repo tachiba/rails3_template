@@ -14,21 +14,7 @@ def get_and_gsub(source_path, local_path)
   gsub_file local_path, /%app_name_classify%/, @app_name.classify
   gsub_file local_path, /%working_user%/, @working_user
   gsub_file local_path, /%working_dir%/, @working_dir
-  #gsub_file local_path, /%remote_repo%/, @remote_repo if @remote_repo
 end
-#
-#def gsub_database(localpath)
-#  return unless @mysql
-#
-#  gsub_file localpath, /%database_name%/, @mysql[:database_name] ? @mysql[:database_name] : @app_name
-#
-#  gsub_file localpath, /%mysql_username_development%/, @mysql[:username_development]
-#  gsub_file localpath, /%mysql_remote_host_development%/, @mysql[:remote_host_development]
-#
-#  gsub_file localpath, /%mysql_username_production%/, @mysql[:username_production]
-#  gsub_file localpath, /%mysql_password_production%/, @mysql[:password_production]
-#  gsub_file localpath, /%mysql_remote_host_production%/, @mysql[:remote_host_production]
-#end
 
 #
 # Gemfile
@@ -66,7 +52,6 @@ gem 'xml-sitemap'
 # crontab integration
 gem 'whenever', require: false
 
-
 gem 'cells'
 
 gem_group :deployment do
@@ -75,7 +60,7 @@ gem_group :deployment do
   gem 'capistrano'
   gem 'capistrano-ext'
   gem 'capistrano_colors'
-  gem 'capistrano_rsync_with_remote_cache'
+#  gem 'capistrano_rsync_with_remote_cache'
 end
 
 gem_group :test, :development do
@@ -84,18 +69,19 @@ gem_group :test, :development do
   gem "factory_girl_rails", "~> 3.0"
   gem 'faker'
   gem 'sqlite3'
-
-  gem 'thin'
 end
 
-gem_group :test do
-  gem 'webmock'
-end
+gem 'webmock', :require => false
 
 gem_group :development do
   gem 'pry-rails'
 end
 
+gem_group :assets do
+  gem 'less-rails'
+  gem 'twitter-bootstrap-rails'
+  gem 'turbo-sprockets-rails3'
+end
 
 # TODO presenter, view model gem?
 #gem 'active_decorator'
@@ -103,36 +89,19 @@ end
 # logical deletion
 gem 'permanent_records'
 
-#gem 'turbo-sprockets-rails3'
-
-comment_lines 'Gemfile', "gem 'sqlite3'"
 uncomment_lines 'Gemfile', "gem 'therubyracer'"
 uncomment_lines 'Gemfile', "gem 'unicorn'"
 
-
 # redis
-gems[:redis] = yes?("Would you like to install redis?")
+gems[:redis] = yes?("Would you like to use redis?")
 if gems[:redis]
   gem 'redis'
 
-  # resque
-  gems[:resque] = yes?("Would you like to install resque?")
-  if gems[:resque]
-    gem 'resque'
+  # sidekiq
+  gems[:sidekiq] = yes?("Would you like to use sidekiq?")
+  if gems[:sidekiq]
+    gem 'sidekiq'
   end
-
-  # redis-rails
-  #gems[:redis_rails] = yes?("Would you like to install redis-rails?")
-  #if gems[:redis_rails]
-  #  gem 'redis-rails'
-  #end
-end
-
-# twitter bootstrap
-gems[:bootstrap] = yes?("Would you like to install bootstrap?")
-if gems[:bootstrap]
-  gem 'less-rails'
-  gem 'twitter-bootstrap-rails', group: 'assets'
 end
 
 # feedzirra
@@ -160,25 +129,6 @@ capify!
 
 if @deploy_via_remote
   @remote_repo = ask("What is your remote git repo? e.g.) username@hostname")
-end
-
-#@mysql = false
-#if yes?("set up mysql now?")
-#  @mysql = {}
-#  @mysql[:database_name] = ask("database name?")
-#
-#  @mysql[:remote_host_development] = ask("mysql:development remote host?")
-#  @mysql[:username_development] = ask("mysql:development username?")
-#
-#  @mysql[:remote_host_production] = ask("mysql:production remote host?")
-#  @mysql[:username_production] = ask("mysql:production username?")
-#  @mysql[:password_production] = ask("mysql:production password?")
-#end
-
-if gems[:redis]
-  @redis = {}
-  @redis[:development] = ask("redis development server?")
-  @redis[:production] = ask("redis production server?")
 end
 
 #
@@ -246,13 +196,6 @@ end
 
 get_and_gsub "#{repo_url}/config/unicorn.rb", 'config/unicorn.rb'
 
-# config/database.yml
-#if @mysql
-#  remove_file "config/database.yml"
-#  get_and_gsub "#{repo_url}/config/database.yml", 'config/database.yml'
-#  gsub_database 'config/database.yml'
-#end
-
 # config/application.rb
 insert_into_file "config/application.rb",
                  %(    config.autoload_paths += Dir[Rails.root.join('lib')]\n),
@@ -270,11 +213,6 @@ insert_into_file "config/application.rb",
                  %(    config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]\n),
                  after: "# The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.\n"
 
-# config/environments
-#insert_into_file "config/environments/production.rb",
-#                 %(  config.assets.precompile += %w( *.css *.js )\n),
-#                 after: "# Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)\n"
-
 insert_into_file "config/environments/production.rb",
                  %(  config.action_controller.page_cache_directory = Rails.root.join("public", "system", "cache")\n),
                  after: "# config.cache_store = :mem_cache_store\n"
@@ -286,53 +224,41 @@ insert_into_file "config/environments/production.rb",
 # config/god
 empty_directory "config/god"
 get_and_gsub "#{repo_url}/config/god/unicorn.rb", 'config/god/unicorn.rb'
+get_and_gsub "#{repo_url}/config/god/unicorn_worker.rb", 'config/god/unicorn_worker.rb'
 
 # config/deploy
 empty_directory "config/deploy"
 get_and_gsub "#{repo_url}/config/deploy/production.rb", 'config/deploy/production.rb'
 
-# config/initializers
-#if gems[:redis_rails]
-#  gsub_file "config/initializers/session_store.rb", /:cookie_store, .+/, ":redis_store, servers: $redis_store, expires_in: 30.minutes"
-#end
-
-#get "#{repo_url}/config/initializers/config.rb", 'config/initializers/config.rb'
 get "#{repo_url}/config/initializers/rainbow.rb", 'config/initializers/rainbow.rb'
 
 if gems[:redis]
   get "#{repo_url}/config/initializers/redis.rb", 'config/initializers/redis.rb'
-  get "#{repo_url}/config/redis.yml", 'config/redis.yml'
 
-  gsub_file 'config/redis.yml', /%redis_development%/, @redis[:development]
-  gsub_file 'config/redis.yml', /%redis_production%/, @redis[:production]
-
-  if gems[:resque]
-    get "#{repo_url}/config/initializers/resque.rb", 'config/initializers/resque.rb'
-    #get "#{repo_url}/lib/tasks/resque.rake", 'lib/tasks/resque.rake'
-
-    insert_into_file "Rakefile",
-                     %(require 'resque/tasks'),
-                     after: "require File.expand_path('../config/application', __FILE__)\n"
+  if gems[:sidekiq]
+    get "#{repo_url}/config/initializers/sidekiq.rb", 'config/initializers/sidekiq.rb'
   end
 end
 
 #
 # Generators
 #
-if gems[:bootstrap]
-  generate 'bootstrap:install'
 
-  if yes?("Would you like to create FIXED layout?(yes=FIXED, no-FLUID)")
-    generate 'bootstrap:layout application fixed'
-  else
-    generate 'bootstrap:layout application fluid'
-  end
+# bootstrap
+generate 'bootstrap:install'
 
-  gsub_file "app/views/layouts/application.html.haml", /lang="en"/, %(lang="ja")
+if yes?("Would you like to create FIXED layout?(yes=FIXED, no-FLUID)")
+  generate 'bootstrap:layout application fixed'
+else
+  generate 'bootstrap:layout application fluid'
 end
 
+gsub_file "app/views/layouts/application.html.haml", /lang="en"/, %(lang="ja")
+
+# rspec
 generate 'rspec:install'
 
+# rails_config
 generate 'rails_config:install'
 
 #

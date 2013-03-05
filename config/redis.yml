@@ -1,6 +1,0 @@
-development: 
-  host: %redis_development%
-  port: 6379
-production: 
-  host: %redis_production%
-  port: 6379

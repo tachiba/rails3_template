@@ -1,25 +1,19 @@
 rails_env = ENV['RAILS_ENV']
 
 case rails_env.to_sym
-  when :development
-    app_path = "%working_dir%/development"
-    worker_processes 1
-
   when :staging
-    app_path = "%working_dir%/current"
     worker_processes 1
     preload_app true
 
   when :production
-    app_path = "%working_dir%/current"
     worker_processes 1
     preload_app true
 
   else
-    # what!!
-    exit(1)
+    worker_processes 1
 end
 
+app_path = File.expand_path(File.join(File.dirname(File.expand_path(__FILE__)), '../../../current'))
 working_directory app_path
 
 # Load rails+github.git into the master before forking workers
@@ -66,4 +60,8 @@ end
 
 after_fork do |server, worker|
   defined?(ActiveRecord::Base) and ActiveRecord::Base.establish_connection
+
+  Sidekiq.configure_client do |config|
+    config.redis = { :url => $redis_url , :namespace => 'sidekiq'}
+  end
 end

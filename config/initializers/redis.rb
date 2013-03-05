@@ -1,9 +1,13 @@
-root = File.dirname(__FILE__) + '/../..'
-c = YAML.load_file(root + '/config/redis.yml')
-e = Rails.env || 'development'
+$redis = Redis.new(
+  host: Settings.redis.host,
+  port: Settings.redis.port,
+  database: Settings.redis.database
+)
+$redis.auth(Settings.redis.auth) if Settings.redis.auth
 
-if c[e]
-  $redis = Redis.new(:host => c[e]['host'], :port => c[e]['port'])
-  $redis.ping
-  $redis_store = "redis://#{c[e]['host']}:#{c[e]['port']}/0/sessions"
-end
+$redis_url = "redis://:%s@%s:%d/%d" % [
+  Settings.redis.auth,
+  Settings.redis.host,
+  Settings.redis.port,
+  Settings.redis.database
+]
