@@ -61,7 +61,9 @@ end
 after_fork do |server, worker|
   defined?(ActiveRecord::Base) and ActiveRecord::Base.establish_connection
 
-  Sidekiq.configure_client do |config|
-    config.redis = { :url => $redis_url , :namespace => 'sidekiq'}
+  if $redis_url
+    Sidekiq.configure_client do |config|
+      config.redis = { :url => $redis_url , :namespace => 'sidekiq'}
+    end
   end
 end
