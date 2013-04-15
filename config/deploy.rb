@@ -50,22 +50,6 @@ set :default_stage, "production"
 after "deploy:update", "deploy:cleanup"
 
 #
-#= precompile
-#
-namespace :deploy do
-  namespace :assets do
-    task :precompile, :roles => :web, :except => { :no_release => true } do
-      if releases.length <= 1 ||
-          capture("cd #{latest_release} && #{source.local.log(source.next_revision(current_revision))} vendor/assets/ app/assets/ | wc -l").to_i > 0
-        run %Q{cd #{latest_release} && #{rake} RAILS_ENV=#{rails_env} #{asset_env} assets:precompile}
-      else
-        logger.info "Skipping asset pre-compilation because there were no asset changes"
-      end
-    end
-  end
-end
-
-#
 #= god
 #
 namespace :god do

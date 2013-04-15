@@ -1,16 +1,7 @@
 app_name = "%app_name%"
 user = "%working_user%"
-
-case (app_env = ENV['RAILS_ENV'] || "development")
-  when 'production'
-    app_root = "%working_dir%/current"
-
-  when 'development'
-    app_root = "%working_dir%/development"
-
-  else
-    exit(1)
-end
+app_root = "%working_dir%/current"
+app_env = ENV['RAILS_ENV'] || "development"
 
 # SEE: https://github.com/blog/519-unicorn-god
 # SEE also: http://unicorn.bogomips.org/SIGNALS.html

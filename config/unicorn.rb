@@ -3,22 +3,17 @@ rails_env = ENV['RAILS_ENV']
 case rails_env.to_sym
   when :staging
     worker_processes 1
-    preload_app true
 
   when :production
     worker_processes 1
-    preload_app true
-
-  else
-    worker_processes 1
 end
 
-app_path = File.expand_path(File.join(File.dirname(File.expand_path(__FILE__)), '../../../current'))
+app_path = "/var/www/%app_name%/current"
 working_directory app_path
 
 # Load rails+github.git into the master before forking workers
 # for super-fast worker spawn times
-#preload_app true
+preload_app true
 
 # Restart any workers that haven't responded in 30 seconds
 timeout 30
