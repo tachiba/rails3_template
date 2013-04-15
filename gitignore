@@ -14,3 +14,8 @@ db/*.sqlite3
 
 /.bundle
 
+# ctags
+tags
+.tags
+.Gemfile.lock.tags
+
